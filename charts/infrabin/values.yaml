@@ -26,7 +26,7 @@ hpa:
 
 serviceMonitor:
   enabled: true
-  namespace: monitoring
+  namespace: infrabin
   interval: 15s
   path: /metrics
   port: http
