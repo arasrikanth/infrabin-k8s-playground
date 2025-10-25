@@ -4,7 +4,7 @@ kind: ServiceMonitor
 metadata:
   name: {{ include "infrabin.fullname" . }}-sm
   labels:
-    release: prometheus
+    release: kube-prometheus-stack
 spec:
   selector:
     matchLabels:
