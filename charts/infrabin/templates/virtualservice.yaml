@@ -1,18 +1,34 @@
 {{- if and .Values.istio.enabled .Values.istio.gateway.enabled }}
-apiVersion: networking.istio.io/v1alpha3
+apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
   name: {{ include "infrabin.fullname" . }}-vs
-  namespace: infrabin
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    meta.helm.sh/release-name: {{ .Release.Name }}
+    meta.helm.sh/release-namespace: {{ .Release.Namespace }}
 spec:
-  hosts:
-    - {{ .Values.istio.gateway.host }}
   gateways:
     - {{ include "infrabin.fullname" . }}-gateway
+  hosts:
+    - '*'
   http:
-    - route:
+    - match:
+        - uri:
+            prefix: /grafana
+      route:
         - destination:
-            host: {{ include "infrabin.fullname" . }}
+            host: {{ .Values.istio.grafanaHost | default "kube-prometheus-stack-grafana.monitoring.svc.cluster.local" }}
+            port:
+              number: {{ .Values.istio.grafanaPort | default 80 }}
+    - match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: {{ .Values.service.name }}
             port:
               number: {{ .Values.service.port }}
 {{- end }}

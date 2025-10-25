@@ -36,7 +36,12 @@ helm upgrade --install istio-gateway istio/gateway -n istio-system
 ```bash
 # pulling latest versions
 kubectl create namespace monitoring --dry-run=client -o yaml | kubectl apply -f -
-helm upgrade --install kube-prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring
+# Enable grafana at /grafana sub path 
+helm upgrade --install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
+  -n monitoring \
+  --set grafana.grafana.ini.server.root_url="http://localhost/grafana" \
+  --set grafana.grafana.ini.server.serve_from_sub_path=true
+
 ```
 
 5. **Configure Namespaces**
