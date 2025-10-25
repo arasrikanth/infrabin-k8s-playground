@@ -131,8 +131,7 @@ helm uninstall kube-prometheus-stack -n monitoring
 helm uninstall istio-gateway istiod istio-base -n istio-system
 ```
 ````
-This is the code block that represents the suggested code change:
-```markdown
+
 +-----------------+
                                      |    Grafana     |
                                      |   Dashboard    |
