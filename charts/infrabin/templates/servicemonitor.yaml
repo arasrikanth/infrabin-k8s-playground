@@ -1,0 +1,20 @@
+{{- if .Values.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "infrabin.fullname" . }}-sm
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "infrabin.name" . }}
+  namespaceSelector:
+    any: false
+    matchNames:
+      - {{ .Values.serviceMonitor.namespace }}
+  endpoints:
+    - port: http
+      path: "{{ .Values.serviceMonitor.path }}"
+      interval: "{{ .Values.serviceMonitor.interval }}"
+{{- end }}

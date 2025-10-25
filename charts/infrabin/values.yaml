@@ -1,0 +1,58 @@
+replicaCount: 1
+image:
+  repository: maruina/infrabin
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  name: infrabin
+  port: 80
+  targetPort: 8080
+
+resources:
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+
+hpa:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 50
+  targetMemoryUtilizationPercentage: 60
+
+serviceMonitor:
+  enabled: true
+  namespace: monitoring
+  interval: 15s
+  path: /metrics
+  port: http
+
+networkPolicy:
+  enabled: true
+  prometheusNamespace: monitoring
+  istioNamespace: istio-system
+
+livenessProbe:
+  httpGet:
+    path: /healthcheck/liveness
+    port: 8080
+  initialDelaySeconds: 10
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /healthcheck/readiness
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+istio:
+  enabled: true
+  gateway:
+    enabled: true
+    host: "*"
+    port: 80
